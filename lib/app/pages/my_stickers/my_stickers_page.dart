@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:fwc_album/app/pages/my_stickers/widgets/sticker_group.dart';
+import 'package:fwc_album/app/pages/my_stickers/presenter/my_stickers_presenter.dart';
+import 'package:fwc_album/app/pages/my_stickers/view/my_stikers_view_impl.dart';
+import 'package:fwc_album/app/pages/my_stickers/widgets/stickers_group.dart';
 import 'package:fwc_album/app/pages/my_stickers/widgets/stickers_group_filter.dart';
 import 'widgets/stikers_status_filter.dart';
 
-class MyStickersPage extends StatelessWidget {
-  const MyStickersPage({super.key});
+class MyStickersPage extends StatefulWidget {
+  //declara a interface (mesmo padrão do java)
+  final MyStickersPresenter presenter;
 
+  const MyStickersPage({super.key, required this.presenter});
+
+  @override
+  State<MyStickersPage> createState() => _MyStickersPageState();
+}
+
+class _MyStickersPageState extends MyStickersViewImpl {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,20 +26,25 @@ class MyStickersPage extends StatelessWidget {
         slivers: [
           SliverToBoxAdapter(
             child: Column(
-              children: const [
+              children: [
                 StikersStatusFilter(
-                  filterSeleted: '',
+                  //a variavel abaixo "statusFilter" vem da classe superior MyStickersViewImpl
+                  filterSeleted: statusFilter,
                 ),
-                StickersGroupFilter(),
+                StickersGroupFilter(countries: countries),
               ],
             ),
           ),
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                return const StickerGroup();
+                final group = album[index];
+                return StickersGroup(
+                  group: group,
+                  statusfilter: statusFilter,
+                );
               },
-              childCount: 10,
+              childCount: album.length,
             ),
           ),
         ],

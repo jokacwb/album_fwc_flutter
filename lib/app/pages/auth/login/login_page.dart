@@ -30,6 +30,8 @@ class _LoginPageState extends LoginViewImpl {
 
   @override
   Widget build(BuildContext context) {
+    emailEC.text = 'josecl@sanepar.com.b';
+    passwordEC.text = 'Bozo323';
     return Scaffold(
       backgroundColor: context.colors.primary,
       body: Form(
