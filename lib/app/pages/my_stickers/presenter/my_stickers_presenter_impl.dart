@@ -50,4 +50,13 @@ class MyStickersPresenterImpl implements MyStickersPresenter {
       _view.updateAlbum(albumFiltered);
     }
   }
+
+  @override
+  void refresh() async {
+    _view.showLoader();
+    await getMyAlbum();
+    //Com a busca do album acima, é necessário reaplicar o filtro
+    countryFilter(countries);
+    statusFilter(statusSelected);
+  }
 }

@@ -12,6 +12,8 @@ import 'package:fwc_album/app/pages/splash/splash_route.dart';
 import 'package:fwc_album/app/repository/auth/auth_repository.dart';
 import 'package:fwc_album/app/repository/auth/auth_repository_impl.dart';
 
+import 'app/pages/sticker_detail/sticker_detail_route.dart';
+
 class FwcAlbum extends StatelessWidget {
   final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -36,6 +38,7 @@ class FwcAlbum extends StatelessWidget {
           '/auth/register': (_) => const RegisterRoute(),
           '/home': (_) => const HomeRoute(),
           '/mystickers': (_) => const MyStickersRoute(),
+          '/sticker-detail': (_) => const StickerDetailRoute(),
         },
       ),
     );

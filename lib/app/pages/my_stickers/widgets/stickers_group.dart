@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_getit/flutter_getit.dart';
 import 'package:fwc_album/app/core/ui/styles/colors_app.dart';
 import 'package:fwc_album/app/core/ui/styles/text_styles.dart';
 import 'package:fwc_album/app/model/groups_stickers_model.dart';
 import 'package:fwc_album/app/model/user_sticker_model.dart';
+import 'package:fwc_album/app/pages/my_stickers/presenter/my_stickers_presenter.dart';
 
 class StickersGroup extends StatelessWidget {
   final GroupsStickersModel group;
@@ -59,7 +61,12 @@ class StickersGroup extends StatelessWidget {
                 (stickerLoop) => stickerLoop.stickerNumber == stickerNumber,
               );
               final sticker = stickerList.isNotEmpty ? stickerList.first : null;
-              final stickerWidget = Sticker(stickerNumber: stickerNumber, sticker: sticker, countryCode: group.countryCode);
+              final stickerWidget = Sticker(
+                stickerNumber: stickerNumber,
+                userStickerModel: sticker,
+                countryCode: group.countryCode,
+                countryName: group.countryName,
+              );
               if (statusfilter == 'all') {
                 return stickerWidget;
               } else if (statusfilter == 'missing') {
@@ -82,26 +89,33 @@ class StickersGroup extends StatelessWidget {
 
 class Sticker extends StatelessWidget {
   final String stickerNumber;
-  final UserStickerModel? sticker;
+  final UserStickerModel? userStickerModel;
   final String countryCode;
+  final String countryName;
 
-  const Sticker({
-    super.key,
-    required this.stickerNumber,
-    required this.sticker,
-    required this.countryCode,
-  });
+  const Sticker({super.key, required this.stickerNumber, required this.userStickerModel, required this.countryCode, required this.countryName});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () async {
+        final presenter = context.get<MyStickersPresenter>();
+
+        await Navigator.of(context).pushNamed('/sticker-detail', arguments: {
+          'countryCode': countryCode,
+          'stickerNumber': stickerNumber,
+          'countryName': countryName,
+          'userStickerModel': userStickerModel,
+        });
+
+        presenter.refresh();
+      },
       child: Container(
-        color: sticker != null ? context.colors.primary : context.colors.grey,
+        color: userStickerModel != null ? context.colors.primary : context.colors.grey,
         child: Column(
           children: [
             Visibility(
-              visible: (sticker?.duplicate ?? 0) > 0,
+              visible: (userStickerModel != null && ((userStickerModel?.duplicate ?? 0) >= 0)),
               maintainSize: true,
               maintainAnimation: true,
               maintainState: true,
@@ -109,7 +123,7 @@ class Sticker extends StatelessWidget {
                 alignment: Alignment.topRight,
                 padding: const EdgeInsets.all(2),
                 child: Text(
-                  '${sticker?.duplicate}',
+                  '${userStickerModel?.duplicate}',
                   style: context.textStyles.textSecondaryFontMedium.copyWith(
                     color: context.colors.greyDark,
                   ),
@@ -118,11 +132,11 @@ class Sticker extends StatelessWidget {
             ),
             Text(
               countryCode,
-              style: context.textStyles.textSecondaryExtraBold.copyWith(color: sticker != null ? Colors.white : Colors.black),
+              style: context.textStyles.textSecondaryExtraBold.copyWith(color: userStickerModel != null ? Colors.white : Colors.black),
             ),
             Text(
               stickerNumber,
-              style: context.textStyles.textSecondaryExtraBold.copyWith(color: sticker != null ? Colors.white : Colors.black),
+              style: context.textStyles.textSecondaryExtraBold.copyWith(color: userStickerModel != null ? Colors.white : Colors.black),
             ),
           ],
         ),
